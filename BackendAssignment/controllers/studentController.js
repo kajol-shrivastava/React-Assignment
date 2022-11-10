@@ -79,9 +79,9 @@ const getStudent=async function(req,res){
 const updateStudent=async function(req,res){
     try{
         let id=req.params.id
-        let student=await studentModel.findById(id)
+        let student=await studentModel.findOne({_id:id,isDeleted:false})
         if(!student){
-            res.status(400).send({status:false,message:"student with this id not found"})
+            return res.status(400).send({status:false,message:"student with this id not found"})
         }
         if(!isValidRequest(req.body)){
             return res.status(400).send({status:false,message:"Invalid Request"})
@@ -103,16 +103,16 @@ const updateStudent=async function(req,res){
          data.total=student.total+req.body.marks
         }
         
-        console.log(id,data)
+       // console.log(id,data)
         let updatedInfo=await studentModel.findOneAndUpdate({_id:id,isDeleted:false},data,{new:true})
-        res.status(200).send({status:true,data:updatedInfo})
+        return res.status(200).send({status:true,data:updatedInfo})
         
 
 
 
     }
     catch(error){
-        res.status(500).send({status:false,message:error.message})
+        return res.status(500).send({status:false,message:error.message})
     }
 }
 
@@ -121,11 +121,11 @@ const deleteStudent=async function(req,res){
     let id=req.params.id
     let student=await studentModel.findOne({_id:id,isDeleted:false})
     if(!student){
-        res.status(404).send({status:false,message:"student with this id not found"})
+        return res.status(404).send({status:false,message:"student with this id not found"})
     }
     
     let updatedInfo=await studentModel.findOneAndUpdate({_id:id},{isDeleted:true})
-    res.status(200).send({status:true,message:"Record Deleted Successfully"})
+    return res.status(200).send({status:true,message:"Record Deleted Successfully"})
     
 
 }
