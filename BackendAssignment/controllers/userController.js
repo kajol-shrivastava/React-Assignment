@@ -6,6 +6,7 @@ const {isValidRequest, isValid,isValidMobile,isValidMail}=require("../Validation
 
 
 const registration=async (req,res)=>{
+   try{
     if(!isValidRequest(req.body)){
         return res.status(400).send({status:false,message:"Invalid Request"})
     }
@@ -51,39 +52,48 @@ const registration=async (req,res)=>{
     //console.log(user)
     let data=await userModel.create(user)
    
-    res.send({ status: true, message: "User registered",data:data})
+    res.status(201).send({ status: true, message: "User registered",data:data})
+   }
+   catch(err){
+       res.status(500).send({status:false,message:err.message})
+   }
 }
 
 const login=async function(req,res){
-    if(!isValidRequest(req.body)){
-        return res.status(400).send({status:false,message:"Invalid Request"})
+    try{
+        if(!isValidRequest(req.body)){
+            return res.status(400).send({status:false,message:"Invalid Request"})
+        }
+        let {email,password}=req.body
+        if(!isValid(email)){
+            return res.status(400).send({status:false,message:"email is required"})
+        }
+    
+       if(!isValidMail(email)){
+        return res.status(400).send({status:false,message:"enter a valid email-Id"}) 
+       }
+        let user=await userModel.findOne({email:email})
+        //console.log(user)
+        if(!user){
+            res.status(401).send({status:false,message:"not a registered email "})
+        }
+    
+        if(!isValid(password)){
+            return res.status(400).send({status:false,message:"password is required"})
+        }
+        if(password.length<8||password.length>15){
+            return res.status(400).send({status:false,message:"password should be of 8-15 characters"})
+        }
+        if(user.password!==password){
+            res.status(401).send({status:false,message:"incorrect password"})
+        }
+        let token=jwt.sign({userId:user._id},"Secret")
+        res.status(200).send({status:true,message:"logged-In successfully",token:token})
+    
     }
-    let {email,password}=req.body
-    if(!isValid(email)){
-        return res.status(400).send({status:false,message:"email is required"})
+    catch(err){
+        res.status(500).send({status:false,message:err.message})
     }
-
-   if(!isValidMail(email)){
-    return res.status(400).send({status:false,message:"enter a valid email-Id"}) 
-   }
-    let user=await userModel.findOne({email:email})
-    console.log(user)
-    if(!user){
-        res.status(401).send({status:false,message:"not a registered email "})
-    }
-
-    if(!isValid(password)){
-        return res.status(400).send({status:false,message:"password is required"})
-    }
-    if(password.length<8||password.length>15){
-        return res.status(400).send({status:false,message:"password should be of 8-15 characters"})
-    }
-    if(user.password!==password){
-        res.status(401).send({status:false,message:"incorrect password"})
-    }
-    let token=jwt.sign({userId:user._id},"Secret")
-    res.status(200).send({status:true,message:"logged-In successfully",token:token})
-
 
 }
 
