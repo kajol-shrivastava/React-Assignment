@@ -3,7 +3,7 @@ const {register,userLogin}=require("../controllers/orgController")
 const {createCropCycle, getcropcycle}=require("../controllers/cropCycleController")
 const {createProperty,getProperty}=require("../controllers/propertyController")
 const {createfield, getfield,updatefield}=require("../controllers/fieldController")
-const {createregion}=require("../controllers/regionController")
+const {createregion,getregion}=require("../controllers/regionController")
 const {authentication}=require("../middlewares/auth")
 
 const router=express.Router()
@@ -34,5 +34,7 @@ router.get("/cropcycle/:cropId",getcropcycle)
 
 //=======================================================region routes===========================================
 router.post("/region",createregion)
+router.get("/region",getregion)
+
 
 module.exports=router

@@ -33,4 +33,15 @@ const createregion= async function(req,res){
     }
 }
 
-module.exports={createregion}
+const getregion=async function(req,res){
+    try{
+         let regionDetails=await regionModel.find()
+         res.status(200).send({status:true,data:regionDetails})
+      }
+    catch(error){
+        res.status(500).send({status:false,message:error.message})
+    }
+    
+}
+
+module.exports={createregion,getregion}

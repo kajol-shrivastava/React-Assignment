@@ -1,6 +1,6 @@
 const fieldModel=require("../models/fieldModel")
 const cropCycleModel=require("../models/cropCycleModel")
-const {isValidRequest,isValidObjectId}=require("../validator/validator")
+const {isValidRequest,isValidObjectId, isValid,isValidCordinate}=require("../validator/validator")
 
 
 const createfield= async function(req,res){
@@ -15,6 +15,19 @@ const createfield= async function(req,res){
             return res.status(400).send({ status: false, message: 'Please provide valid propertyId' })
         }
         let {crop,size,location}=req.body
+        if(!isValid(size)){
+            return res.status(400).send({status:false,message:"please provide size of the field"})
+        }
+
+        let {latitude,longitude}=location
+        if(!isValidCordinate(latitude)||!isValidCordinate(longitude)){
+            return res.status(400).send({status:false,message:"please provide valid location coordinates"})
+        }
+
+        if(!isValid(crop)){
+            return res.status(400).send({status:false,message:"please provide valid crop name "})
+        }
+        
         let cropCycleAvailable=await cropCycleModel.findOne({cropname:crop})
         if (!cropCycleAvailable) {
             return res.status(404).send({ status: false, message: "cropcycle not found" })
