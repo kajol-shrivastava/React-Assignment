@@ -1,0 +1,28 @@
+.Container{
+    display: flex;
+    flex-direction: column;
+    gap:8px;
+    
+}
+
+.container label{
+    font-weight: 500;
+    font-size: 1rem;
+    color: rgb(7, 7, 7);
+}
+
+.container input{
+    border-radius: 5px;
+    border:1px solid rgb(229, 228, 228);
+    outline: none;
+    padding: 10px 15px;
+    color: #000;
+}
+
+.container input:hover{
+    border-color: rgb(235, 231, 231)
+}
+
+.container input:focus{
+    border-color: blueviolet;
+}
